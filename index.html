@@ -3,225 +3,249 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة اختبارات التمريض</title>
+    <title>كلية التمريض - جامعة دمنهور</title>
     <style>
-        * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 0; }
-        body { background-color: #f0f4f8; color: #2d3748; padding: 20px 15px; display: flex; flex-direction: column; align-items: center; }
-        header { text-align: center; margin-bottom: 25px; }
-        header h1 { color: #0b4f6c; font-size: 22px; margin-bottom: 6px; }
-        header p { color: #718096; font-size: 14px; }
-        .container { width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 12px; }
+        * {
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .faculty-title {
+            color: #90caf9;
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+        header h1 {
+            color: #ffffff;
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+        header p {
+            color: #a0a0a0;
+            font-size: 13px;
+        }
+        .container {
+            width: 100%;
+            max-width: 520px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
         
-        /* تصميم قائمة المادة */
         details {
-            background: #ffffff;
+            background: #1e1e1e;
             border-radius: 12px;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+            border: 1px solid #2d2d2d;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
             overflow: hidden;
+            transition: border-color 0.2s;
+        }
+        details[open] {
+            border-color: #3d5a80;
         }
         summary {
-            padding: 16px 20px;
-            font-size: 16px;
-            font-weight: bold;
-            color: #1a202c;
+            padding: 16px 18px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #f1f1f1;
             cursor: pointer;
             list-style: none;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: #ffffff;
+            background-color: #1e1e1e;
+            user-select: none;
         }
-        summary::-webkit-details-marker { display: none; }
+        summary::-webkit-details-marker {
+            display: none;
+        }
         summary::after {
             content: '▼';
-            font-size: 12px;
-            color: #0b4f6c;
-            transition: transform 0.2s;
+            font-size: 11px;
+            color: #90caf9;
+            transition: transform 0.25s ease;
         }
         details[open] summary::after {
             transform: rotate(180deg);
         }
         details[open] summary {
-            border-bottom: 1px solid #edf2f7;
-            background-color: #f8fafc;
+            border-bottom: 1px solid #2a2a2a;
+            background-color: #252525;
         }
 
-        /* روابط الدروس والامتحانات داخل المادة */
         .lessons-list {
-            padding: 10px 15px;
+            padding: 12px 14px;
             display: flex;
             flex-direction: column;
             gap: 8px;
-            background-color: #fafbfc;
+            background-color: #181818;
         }
         .lesson-btn {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 15px;
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
+            padding: 12px 14px;
+            background: #242424;
+            border: 1px solid #333333;
             border-radius: 8px;
             text-decoration: none;
-            color: #4a5568;
-            font-size: 14px;
+            color: #e0e0e0;
+            font-size: 13.5px;
             font-weight: 500;
+            transition: background 0.15s;
         }
         .lesson-btn:active {
-            background-color: #edf2f7;
+            background-color: #2f2f2f;
         }
         .badge {
-            background: #e2f1f8;
-            color: #0b4f6c;
+            background: #1b3a4b;
+            color: #90caf9;
             font-size: 11px;
             padding: 4px 8px;
             border-radius: 6px;
             font-weight: bold;
         }
-        footer { margin-top: 30px; font-size: 12px; color: #a0aec0; }
+        .empty-msg {
+            color: #777;
+            font-size: 13px;
+            text-align: center;
+            padding: 10px 0;
+            margin: 0;
+        }
+
+        footer {
+            margin-top: auto;
+            padding-top: 35px;
+            padding-bottom: 10px;
+            font-size: 13px;
+            color: #888888;
+            text-align: center;
+        }
+        .maker-tag {
+            color: #90caf9;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>منصة اختبارات التمريض</h1>
-        <p>اضغطي على المادة لاختيار الدرس وبدء الاختبار</p>
+        <div class="faculty-title">كلية التمريض - جامعة دمنهور</div>
+        <h1>منصة الاختبارات الإلكترونية</h1>
+        <p>اختاري المادة لعرض الدروس المتاحة</p>
     </header>
 
     <div class="container">
 
-        <!-- المادة 1 -->
+        <!-- 1 -->
         <details>
             <summary>التعزيز الصحي في الأطفال</summary>
             <div class="lessons-list">
-                <a href="exam_hp_1.html" class="lesson-btn">
-                    <span>الدرس الأول: مقدمة في التعزيز الصحي</span>
-                    <span class="badge">بدء الامتحان</span>
-                </a>
-                <a href="exam_hp_2.html" class="lesson-btn">
-                    <span>الدرس الثاني: التغذية والنمو</span>
-                    <span class="badge">بدء الامتحان</span>
-                </a>
+                <p class="empty-msg">سيتم إضافة الامتحانات قريباً</p>
             </div>
         </details>
 
-        <!-- المادة 2 -->
+        <!-- 2 -->
         <details>
             <summary>علم نفس النمو</summary>
             <div class="lessons-list">
-                <a href="exam_dp_1.html" class="lesson-btn">
-                    <span>الدرس الأول: مراحل النمو</span>
-                    <span class="badge">بدء الامتحان</span>
-                </a>
+                <p class="empty-msg">سيتم إضافة الامتحانات قريباً</p>
             </div>
         </details>
 
-        <!-- المادة 3 -->
+        <!-- 3 -->
         <details>
             <summary>تمريض الأطفال عملي</summary>
             <div class="lessons-list">
-                <a href="#" class="lesson-btn">
-                    <span>الدرس الأول: العلامات الحيوية للأطفال</span>
-                    <span class="badge">قريباً</span>
-                </a>
+                <p class="empty-msg">سيتم إضافة الامتحانات قريباً</p>
             </div>
         </details>
 
-        <!-- المادة 4 -->
+        <!-- 4 -->
         <details>
             <summary>الرعاية التمريضية الشاملة</summary>
             <div class="lessons-list">
-                <a href="#" class="lesson-btn">
-                    <span>الدرس الأول: خطة الرعاية التمريضية</span>
-                    <span class="badge">قريباً</span>
-                </a>
+                <p class="empty-msg">سيتم إضافة الامتحانات قريباً</p>
             </div>
         </details>
 
-        <!-- المادة 5 -->
+        <!-- 5 -->
         <details>
             <summary>طب أطفال</summary>
             <div class="lessons-list">
-                <a href="#" class="lesson-btn">
-                    <span>الدرس الأول: أمراض الجهاز التنفسي</span>
-                    <span class="badge">قريباً</span>
-                </a>
+                <p class="empty-msg">سيتم إضافة الامتحانات قريباً</p>
             </div>
         </details>
 
-        <!-- المادة 6 -->
+        <!-- 6 -->
         <details>
             <summary>جراحة أطفال</summary>
             <div class="lessons-list">
-                <a href="#" class="lesson-btn">
-                    <span>الدرس الأول: التحضير للعمليات</span>
-                    <span class="badge">قريباً</span>
-                </a>
+                <p class="empty-msg">سيتم إضافة الامتحانات قريباً</p>
             </div>
         </details>
 
-        <!-- المادة 7 -->
+        <!-- 7 -->
         <details>
             <summary>تمريض الأطفال نظري</summary>
             <div class="lessons-list">
-                <a href="#" class="lesson-btn">
-                    <span>الدرس الأول: أسس تمريض الأطفال</span>
-                    <span class="badge">قريباً</span>
-                </a>
+                <p class="empty-msg">سيتم إضافة الامتحانات قريباً</p>
             </div>
         </details>
 
-        <!-- المادة 8 -->
+        <!-- 8 -->
         <details>
             <summary>الممارسات التمريضية القائمة على الأدلة</summary>
             <div class="lessons-list">
-                <a href="#" class="lesson-btn">
-                    <span>الدرس الأول: مقدمة في EBP</span>
-                    <span class="badge">قريباً</span>
-                </a>
+                <p class="empty-msg">سيتم إضافة الامتحانات قريباً</p>
             </div>
         </details>
 
-        <!-- المادة 9 -->
+        <!-- 9 -->
         <details>
             <summary>صحة الأسرة</summary>
             <div class="lessons-list">
-                <a href="#" class="lesson-btn">
-                    <span>الدرس الأول: الرعاية الصحية الأولية</span>
-                    <span class="badge">قريباً</span>
-                </a>
+                <p class="empty-msg">سيتم إضافة الامتحانات قريباً</p>
             </div>
         </details>
 
-        <!-- المادة 10 -->
+        <!-- 10 -->
         <details>
             <summary>طب شرعي وسموم</summary>
             <div class="lessons-list">
-                <a href="#" class="lesson-btn">
-                    <span>الدرس الأول: أنواع السموم والإسعافات</span>
-                    <span class="badge">قريباً</span>
-                </a>
+                <p class="empty-msg">سيتم إضافة الامتحانات قريباً</p>
             </div>
         </details>
 
-        <!-- المادة 11 -->
+        <!-- 11 -->
         <details>
             <summary>المفاهيم الحديثة لتمريض</summary>
             <div class="lessons-list">
-                <a href="#" class="lesson-btn">
-                    <span>الدرس الأول: القيادة والجودة في التمريض</span>
-                    <span class="badge">قريباً</span>
-                </a>
+                <p class="empty-msg">سيتم إضافة الامتحانات قريباً</p>
             </div>
         </details>
 
     </div>
 
     <footer>
-        بالتوفيق والنجاح لدفعتنا الجميلة
+        صُنع بواسطة <span class="maker-tag">محمود عبدالله</span>
     </footer>
 
 </body>
-          </html>
-          
+</html>
