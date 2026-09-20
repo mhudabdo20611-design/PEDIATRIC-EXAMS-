@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pediatric Physical Examination - Comprehensive Exam</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #3b82f6;
+            --secondary: #0f172a;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --correct: #166534;
+            --correct-bg: #dcfce7;
+            --correct-border: #86efac;
+            --incorrect: #991b1b;
+            --incorrect-bg: #fee2e2;
+            --incorrect-border: #fca5a5;
+            --border: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), #1d4ed8);
+            color: white;
+            padding: 30px 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .exam-info {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            font-size: 13px;
+            flex-wrap: wrap;
+        }
+
+        .info-pill {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .question-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 22px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            transition: transform 0.1s ease;
+        }
+
+        .q-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 14px;
+            gap: 10px;
+        }
+
+        .q-num {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 15px;
+            background: #eff6ff;
+            padding: 2px 8px;
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+
+        .q-text {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--secondary);
+            flex-grow: 1;
+        }
+
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 12px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+
+        .option-label:hover {
+            background-color: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+
+        .option-label input[type="radio"] {
+            margin-right: 12px;
+            accent-color: var(--primary);
+            width: 17px;
+            height: 17px;
+        }
+
+        .explanation {
+            display: none;
+            margin-top: 15px;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 13.5px;
+            line-height: 1.5;
+        }
+
+        .explanation.visible {
+            display: block;
+        }
+
+        .explanation.correct {
+            background-color: var(--correct-bg);
+            border: 1px solid var(--correct-border);
+            color: var(--correct);
+        }
+
+        .explanation.incorrect {
+            background-color: var(--incorrect-bg);
+            border: 1px solid var(--incorrect-border);
+            color: var(--incorrect);
+        }
+
+        .footer-controls {
+            position: sticky;
+            bottom: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid var(--border);
+            margin-top: 30px;
+        }
+
+        .score-display {
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--secondary);
+        }
+
+        .btn-submit {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-submit:hover {
+            background-color: #1d4ed8;
+        }
+
+        .btn-reset {
+            background-color: #f1f5f9;
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            padding: 10px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .btn-reset:hover {
+            background-color: #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Pediatric Physical Examination Examination</h1>
+        <p>Comprehensive Multiple Choice Assessment based strictly on pediatric assessment protocols.</p>
+        <div class="exam-info">
+            <span class="info-pill">Total Questions: 40</span>
+            <span class="info-pill">Pass Mark: 75%</span>
+            <span class="info-pill">Format: Single Choice (A, B, C, D)</span>
+            <span class="info-pill">Offline Standalone HTML</span>
+        </div>
+    </header>
+
+    <form id="quizForm">
+        <div id="questionsContainer"></div>
+
+        <div class="footer-controls">
+            <div class="score-display" id="scoreText">Answer all questions and submit</div>
+            <div>
+                <button type="button" class="btn-submit" onclick="submitExam()">Submit Exam</button>
+                <button type="button" class="btn-reset" onclick="resetExam()">Reset</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+const quizData = [
+    {
+        q: "What is the single most important component of the pediatric physical examination?",
+        options: ["Deep abdominal palpation", "Percussion of the thorax", "Taking an accurate health history", "Measuring head circumference"],
+        answer: 2,
+        correct_exp: "Correct! The lecture text explicitly states: 'Taking an accurate health history is the single most important component of physical examination.'",
+        incorrect_exp: "Incorrect. While physical measurements and techniques are crucial, taking an accurate health history is explicitly identified in the text as the single most important component."
+    },
+    {
+        q: "According to the recommended follow-up schedule, how frequently should a child be examined during the first year of life?",
+        options: ["Every 3 months (4 times/year)", "Each month (12 times/year)", "Every 6 months (2 times/year)", "Yearly once a year"],
+        answer: 1,
+        correct_exp: "Correct! The follow-up schedule specifies: 'Each month during the first year of life (12 times / year).'",
+        incorrect_exp: "Incorrect. The schedule specifies monthly visits during the first year, every 3 months during the 2nd & 3rd years, every 6 months during the 4th & 5th years, and yearly from the 6th year."
+    },
+    {
+        q: "How often should routine follow-up examinations be scheduled for a child during their 4th and 5th years of life?",
+        options: ["Each month", "Each 3 months", "Each 6 months", "Yearly throughout life"],
+        answer: 2,
+        correct_exp: "Correct! The schedule specifies: 'Each 6 months during the 4th & 5th years (2 times / year).'",
+        incorrect_exp: "Incorrect. The 4th and 5th years require examination every 6 months (2 times per year)."
+    },
+    {
+        q: "When performing an abdominal examination on a pediatric patient, what is the correct sequence of examination techniques?",
+        options: ["Inspection, Palpation, Percussion, Auscultation", "Inspection, Auscultation, Palpation, Percussion", "Palpation, Percussion, Auscultation, Inspection", "Auscultation, Inspection, Percussion, Palpation"],
+        answer: 1,
+        correct_exp: "Correct! Special rule in abdominal examination: Inspection and Auscultation before Palpation and Percussion to avoid altering bowel sounds.",
+        incorrect_exp: "Incorrect. While the standard general sequence is Inspection, Palpation, Percussion, Auscultation, the special rule for abdominal examination requires Auscultation BEFORE Palpation and Percussion."
+    },
+    {
+        q: "A nurse is assessing a child with suspected abdominal pain. Why must auscultation precede palpation and percussion in this examination?",
+        options: ["Palpation and percussion cause severe vasodilation", "Touching the abdomen can alter or artificially stimulate bowel sounds", "Auscultation relaxes the abdominal wall muscles completely", "Percussion dullness prevents hearing heart sounds"],
+        answer: 1,
+        correct_exp: "Correct! The text states: 'Inspection and Auscultation before Palpation and Percussion to avoid altering bowel sounds.'",
+        incorrect_exp: "Incorrect. Palpation and percussion may artificially distort, stimulate, or alter bowel sounds, leading to an inaccurate assessment."
+    },
+    {
+        q: "Which part of the examiner's hand is specifically indicated to assess skin temperature?",
+        options: ["Fingertips", "The palm of the hand", "The back of the hand (dorsum)", "The ulnar surface"],
+        answer: 2,
+        correct_exp: "Correct! The text states: 'The back of the hand (dorsum) is used to assess the temperature.'",
+        incorrect_exp: "Incorrect. Fingertips are used for pulses and lymph nodes, palms are used for vibrations, and the dorsum (back of hand) is used for temperature."
+    },
+    {
+        q: "What is the primary diagnostic purpose of the palm of the examiner's hand during palpation?",
+        options: ["Assessing surface temperature", "Assessing vibrations", "Palpating lymph node size", "Detecting subtle skin moisture"],
+        answer: 1,
+        correct_exp: "Correct! The text states: 'The palm of the hand is used to assess vibrations.'",
+        incorrect_exp: "Incorrect. Vibrations are detected using the palm; fingertips assess pulses and lymph nodes, and the dorsum assesses temperature."
+    },
+    {
+        q: "In light palpation, approximately how deep should the examiner gently depress the skin surface?",
+        options: ["0.2 to 0.5 centimeters", "1 to 1.5 centimeters", "3 to 5 centimeters", "6 to 8 centimeters"],
+        answer: 1,
+        correct_exp: "Correct! Light palpation is accomplished by depressing the skin surface approximately 1 to 1.5 centimeters in a circular motion.",
+        incorrect_exp: "Incorrect. Light palpation depresses 1 to 1.5 cm; 3 to 5 cm corresponds to deep palpation."
+    },
+    {
+        q: "What is the primary indication and technique for deep palpation in children?",
+        options: ["Depressing 1 to 1.5 cm to evaluate superficial pulses", "Depressing 3 to 5 cm to assess abdominal structures like liver/spleen and masses", "Using the dorsum of the hand to estimate organ warmth", "Tapping lightly with the wrist to elicit resonant notes"],
+        answer: 1,
+        correct_exp: "Correct! Deep palpation depresses the surface approximately 3 to 5 cm to identify underlying masses and abdominal structures like the liver and spleen.",
+        incorrect_exp: "Incorrect. Depressing 1-1.5 cm is light palpation; deep palpation depresses 3-5 cm to evaluate deep structures such as the liver and spleen."
+    },
+    {
+        q: "Why is percussion generally of little clinical benefit and advised to be avoided in low-birth-weight or preterm infants?",
+        options: ["It induces severe hypothermia immediately", "It may cause mechanical injury such as bruising or contusions", "It permanently damages the tympanic membrane", "It gives a falsely dull percussion note over open air structures"],
+        answer: 1,
+        correct_exp: "Correct! The text states: 'Percussion is of little clinical benefit and should be avoided, especially in low-birth-weight or preterm infants, as it may cause injury (e.g., bruising, contusions).'",
+        incorrect_exp: "Incorrect. Percussion can cause physical trauma such as bruising and contusions to delicate tissues in low-birth-weight or preterm neonates."
+    },
+    {
+        q: "During thoracic percussion, what sound is normally expected when percussing over healthy lung tissue?",
+        options: ["Flat", "Dull", "Resonance", "Tympanic"],
+        answer: 2,
+        correct_exp: "Correct! 'Resonance (long sound, over normal lungs)' is the normal percussion note over healthy pulmonary tissue.",
+        incorrect_exp: "Incorrect. Flat is heard over bone/muscle, Dull over solid organs like the liver, and Tympanic over hollow viscous organs like the stomach."
+    },
+    {
+        q: "When percussing over the liver of a child, which percussion note is expected under normal conditions?",
+        options: ["Resonant", "Hyper-resonant", "Dull", "Tympanic"],
+        answer: 2,
+        correct_exp: "Correct! The text summarizes: 'Dull (medium pitch, over liver)'.",
+        incorrect_exp: "Incorrect. Solid organs like the liver yield a Dull percussion note; resonance is over lungs, and tympany is over the gastric bubble."
+    },
+    {
+        q: "Which percussion sound is characterized by a high pitch, drum-like quality and is normally heard over the stomach?",
+        options: ["Flat", "Tympanic", "Resonant", "Dull"],
+        answer: 1,
+        correct_exp: "Correct! The text specifies: 'Tympanic (high pitch, drum-like over stomach).'",
+        incorrect_exp: "Incorrect. Flat is over muscle/bone, dull is over liver, and tympanic is drum-like over the stomach."
+    },
+    {
+        q: "What is the proper strike technique when performing indirect percussion on a pediatric chest?",
+        options: ["Strike three times using the fleshy pad of the middle finger", "Use a quick flick of the wrist to strike with the end (not the pad) of the opposite middle finger twice", "Use the whole palm with arm force to depress the distal inter-phalangeal joint", "Strike once with the index finger pad perpendicular to the clavicle"],
+        answer: 1,
+        correct_exp: "Correct! Proper technique: 'With the end (not the pad) of the opposite middle finger, use a quick flick of the wrist to strike first finger... Strike twice in each of the percussion target areas.'",
+        incorrect_exp: "Incorrect. The proper strike requires a wrist flick, striking twice with the tip/end (not the pad) of the opposite middle finger onto the hyperextended distal joint."
+    },
+    {
+        q: "In gathering pediatric health history, under which category does 'immunizations and previous hospitalizations' belong?",
+        options: ["Statistical information", "Client profile", "Health history", "Review of systems"],
+        answer: 2,
+        correct_exp: "Correct! Under Health history: 'Birth history, growth and development, common childhood illnesses, immunizations, previous hospitalizations, accidents or injuries, allergies...'",
+        incorrect_exp: "Incorrect. Statistical info includes demographics, Client profile includes daily habits and developmental level, whereas Health history encompasses immunizations and previous hospitalizations."
+    },
+    {
+        q: "During a general appearance assessment, a nurse notices a child consistently tilting their head in an awkward position. What does this posture most likely indicate?",
+        options: ["Severe abdominal distension", "Hearing or visual loss", "Low self-esteem or feeling of rejection", "Acute dehydration"],
+        answer: 1,
+        correct_exp: "Correct! The text states: 'Children with hearing or visual loss may characteristically tilt head in an awkward position to hear or see better.'",
+        incorrect_exp: "Incorrect. Slumped or apathetic posture indicates low self-esteem/rejection, whereas tilting the head in an awkward position is a compensatory clue for hearing or visual impairment."
+    },
+    {
+        q: "A child exhibits a slumped, careless, and apathetic posture during assessment. According to pediatric assessment guidelines, what does this finding suggest?",
+        options: ["Severe cardiac decompensation", "Hearing or visual impairment", "Low self-esteem or a feeling of rejection", "Elevated intracranial pressure"],
+        answer: 2,
+        correct_exp: "Correct! 'The child with low self-esteem or a feeling of rejection may assume a slumped, careless or apathetic pose of posture.'",
+        incorrect_exp: "Incorrect. Low self-esteem or feeling rejected manifests as a slumped, apathetic posture, while sensory deficits produce head tilt."
+    },
+    {
+        q: "Which skin assessment term is correctly defined as a localized area of depigmentation (loss of pigment)?",
+        options: ["Nevi", "Carotenemia", "Vitiligo", "Erythema"],
+        answer: 2,
+        correct_exp: "Correct! The text defines: 'Vitiligo: Area of depigmentation (loss of pigment).'",
+        incorrect_exp: "Incorrect. Nevi are areas of increased pigment, Vitiligo is depigmentation, and Carotenemia is orange skin discoloration."
+    },
+    {
+        q: "An orange discoloration of the skin that is best visualized on the palms of the hands and soles of the feet is defined as:",
+        options: ["Jaundice", "Mottling", "Carotenemia", "Erythema"],
+        answer: 2,
+        correct_exp: "Correct! The text defines: 'Carotenemia: Orange color of the skin best seen on the soles of the feet and palms of the hands.'",
+        incorrect_exp: "Incorrect. Jaundice is yellow (best seen in sclera), Mottling is blotchy, and Carotenemia is orange (best seen on soles and palms)."
+    },
+    {
+        q: "Where is cyanosis most reliably evaluated during a pediatric physical examination?",
+        options: ["Sclera of the eyes", "Palms of the hands and soles of the feet", "Mucous membrane of the mouth under the tongue", "Skin over the frontal sinuses"],
+        answer: 2,
+        correct_exp: "Correct! The text states: 'Cyanosis: Blue discoloration of the skin best seen in the mucous membrane of the mouth under the tongue.'",
+        incorrect_exp: "Incorrect. Sclera reveals jaundice, soles/palms reveal carotenemia, and central cyanosis is best observed in the mucous membranes of the mouth under the tongue."
+    },
+    {
+        q: "What is the normal capillary refill time in a pediatric patient?",
+        options: ["Less than 1 second only", "Within 1 to 2 seconds", "3 to 5 seconds", "5 to 7 seconds"],
+        answer: 1,
+        correct_exp: "Correct! 'Pressing on the infant's/child's nail edge for 1-2 seconds and releasing... the color will return to the nail within 1-2 seconds.'",
+        incorrect_exp: "Incorrect. Capillary refill should return to normal pink color within 1 to 2 seconds. Greater than 2 seconds is delayed."
+    },
+    {
+        q: "A 2-year-old child presents with a capillary refill time of 4 seconds. Which clinical conditions could explain this prolonged capillary refill?",
+        options: ["Hypercarotenemia or vitiligo", "Anemia, hypovolemia, or decreased cardiac output", "Premature closure of the anterior fontanel", "Elevated intracranial pressure only"],
+        answer: 1,
+        correct_exp: "Correct! 'A capillary refill of more than 2 seconds may be caused by anemia, hypovolemia or decreased cardiac output.'",
+        incorrect_exp: "Incorrect. Capillary refill >2 seconds indicates compromised peripheral perfusion caused by anemia, hypovolemia, or low cardiac output."
+    },
+    {
+        q: "How should a nurse palpate pediatric lymph nodes during an examination?",
+        options: ["Using the palm of the hand applying deep linear pressure", "Using the distal portion of the fingers, gently but firmly pressing in a circular motion", "Using the dorsum of the hand with quick tapping strokes", "Pinching the overlying skin fold between thumb and forefinger"],
+        answer: 1,
+        correct_exp: "Correct! 'Palpate nodes using the distal portion of the fingers and gently but firmly pressing in a circular motion along the regions where nodes are normally present.'",
+        incorrect_exp: "Incorrect. Lymph nodes must be palpated using the distal fingertips with gentle, firm circular pressure."
+    },
+    {
+        q: "Which description represents normal, benign lymph node findings in children?",
+        options: ["Warm, tender, erythematous, fixed nodes", "Small, non-tender, movable nodes", "Hard, fused, enlarged nodes greater than 3 cm", "Fluctuant, hot nodes with drainage"],
+        answer: 1,
+        correct_exp: "Correct! The text states: 'In children, small, non-tender, movable nodes are usually normal.'",
+        incorrect_exp: "Incorrect. Small, mobile, non-tender lymph nodes are normal in children. Warm, tender, or enlarged nodes indicate infection or inflammation."
+    },
+    {
+        q: "At what age does the anterior fontanel typically close?",
+        options: ["Birth to 6-8 weeks", "4 to 6 months", "12 to 18 months", "24 to 36 months"],
+        answer: 2,
+        correct_exp: "Correct! The text specifies: 'Anterior fontanel closes between 12-18 months. Posterior fontanel closes between birth to 6-8 weeks.'",
+        incorrect_exp: "Incorrect. The posterior fontanel closes at birth to 6-8 weeks, while the anterior fontanel closes between 12 and 18 months."
+    },
+    {
+        q: "A nurse palpates a sunken anterior fontanel in a 6-month-old infant. What clinical condition is this finding characteristically associated with?",
+        options: ["Increased intracranial pressure", "Acute fluid overload", "Dehydration", "Hydrocephalus"],
+        answer: 2,
+        correct_exp: "Correct! The text states: 'Sunken fontanel is associated with dehydration.'",
+        incorrect_exp: "Incorrect. Sunken fontanels are a classic hallmark of dehydration. A bulging fontanel indicates increased ICP (or transient crying)."
+    },
+    {
+        q: "Under which circumstance is a bulging fontanel considered a normal physiological finding rather than a sign of increased intracranial pressure (ICP)?",
+        options: ["While the infant is sleeping soundly", "During crying, coughing, or vomiting", "When placed in a cool environment", "During deep abdominal palpation"],
+        answer: 1,
+        correct_exp: "Correct! 'Bulging fontanel is associated with increased intracranial pressure (ICP), but is normally seen during crying, coughing or vomiting.'",
+        incorrect_exp: "Incorrect. A bulging fontanel can physiologically and transiently occur during crying, coughing, or vomiting due to transient venous pressure elevation."
+    },
+    {
+        q: "How is the anatomical position of the thyroid gland verified before palpating its lateral lobes?",
+        options: ["By percussing over the suprasternal notch", "By identifying the isthmus of the thyroid across the trachea", "By palpating the carotid bulb behind the ear", "By measuring neck circumference at the clavicle"],
+        answer: 1,
+        correct_exp: "Correct! 'Palpate thyroid gland by identifying the isthmus of the thyroid across the trachea to identify enlarged thyroid then gently displace the thyroid gland laterally...'",
+        incorrect_exp: "Incorrect. The examiner locates the isthmus crossing the trachea, then laterally displaces the gland to palpate each lobe."
+    },
+    {
+        q: "What clinical signs observed during facial inspection strongly suggest sinusitis in a child?",
+        options: ["Cyanosis of buccal mucosa and sunken fontanel", "Puffiness and redness over the sinuses with dark circles under the eyes", "Vitiligo on cheeks and cracked lips", "Deviated septum with white plaques on tonsils"],
+        answer: 1,
+        correct_exp: "Correct! The text notes: 'NB: Puffiness and redness over the sinuses and dark circles under the eyes are signs of sinusitis.'",
+        incorrect_exp: "Incorrect. Sinusitis presents with puffiness/redness over the maxillary/frontal sinuses accompanied by infraorbital dark circles ('allergic shiners')."
+    },
+    {
+        q: "How does the examiner measure the proper height alignment of the pinna during an ear assessment?",
+        options: ["Measuring the vertical distance from the tragus to the clavicle", "Drawing an imaginary line from the outer canthus of the eye to the occiput", "Drawing a vertical line from the crown of the head to the earlobe", "Measuring horizontal distance from the tip of the nose to the antihelix"],
+        answer: 1,
+        correct_exp: "Correct! 'The height alignment of the pinna is measured by drawing an imaginary line from the outer canthus of the eye to the occiput... The top of the pinna should meet or cross this line.'",
+        incorrect_exp: "Incorrect. Alignment is checked by drawing an imaginary horizontal line from the outer canthus of the eye to the occipital prominence."
+    },
+    {
+        q: "What congenital or developmental conditions are low-set ears commonly associated with?",
+        options: ["Cardiac arrhythmias and asthma", "Renal anomalies or mental retardation (genetic syndromes)", "Isolated pulmonary hypoplasia", "Growth hormone deficiency only"],
+        answer: 1,
+        correct_exp: "Correct! 'Low set ears are commonly associated with renal anomalies or mental retardation (genetic syndromes).'",
+        incorrect_exp: "Incorrect. Low-set ears are strongly associated with renal anomalies and mental retardation/chromosomal syndromes."
+    },
+    {
+        q: "Why is the oral temperature route contraindicated in neonates and young children in current pediatric practice?",
+        options: ["It consistently overestimates core temperature by 3°C", "For infection control purposes and risk of injury", "Because oral mucous membranes cannot conduct heat to mercury", "It requires 10 minutes of active cooperation"],
+        answer: 1,
+        correct_exp: "Correct! 'Now rectal route is used for neonates and axillary route is used for infants and older children. Oral route is not used for infection control purposes and risk of injury.'",
+        incorrect_exp: "Incorrect. The oral route is avoided due to the risks of trauma/injury (e.g., biting thermometers) and infection control considerations."
+    },
+    {
+        q: "In which pediatric patient is the rectal temperature measurement strictly NOT recommended?",
+        options: ["A healthy neonate during the first 24 hours of life", "A child who had rectal surgery, has diarrhea, or is on mucosal-damaging chemotherapy", "An infant presenting with an axillary temperature of 38°C", "A child with mild upper respiratory tract rhinovirus infection"],
+        answer: 1,
+        correct_exp: "Correct! 'Rectal temperature is not recommended in anyone who has had rectal surgery or in children with diarrhea or those receiving chemotherapy that affects mucosa.'",
+        incorrect_exp: "Incorrect. Rectal insertion is contraindicated following rectal surgery, in children with active diarrhea, or in immunosuppressed patients with chemotherapy-induced mucositis."
+    },
+    {
+        q: "Where should the stethoscope be positioned to auscultate the apical pulse in an infant under 3 years of age?",
+        options: ["At the 2nd intercostal space right sternal border", "Between the 3rd and 4th intercostal space near the sternum (PMI)", "At the 5th left intercostal space in the mid-clavicular line", "Directly over the xiphoid process"],
+        answer: 1,
+        correct_exp: "Correct! For infants: 'Place the stethoscope between the 3rd and the 4th intercostal space near the sternum at the point of maximum impulse (PMI) in infant, and at 5th left intercostal space in mid-clavicular line in older children.'",
+        incorrect_exp: "Incorrect. In infants under 3 years, PMI is between the 3rd and 4th intercostal space near the sternum. In older children, it shifts to the 5th left intercostal space at the mid-clavicular line."
+    },
+    {
+        q: "What is the recommended clinical sequence when obtaining vital signs in an infant, and what is the scientific rationale?",
+        options: ["Temperature first, then blood pressure, pulse, and respiration, because temperature takes longest", "Respiration BEFORE pulse and temperature, because touching the child may induce crying and alter breathing", "Apical pulse first, then rectal temperature, then blood pressure, then respiration", "Blood pressure first to avoid cuff anxiety, followed immediately by rectal temperature"],
+        answer: 1,
+        correct_exp: "Correct! 'Always take respiratory rate BEFORE taking pulse & temperature since the child may cry during those procedures.'",
+        incorrect_exp: "Incorrect. Respiration must always be assessed first while the infant is calm, as intrusive procedures like thermometers and stethoscopes provoke crying and invalidate respiratory rates."
+    },
+    {
+        q: "According to pediatric tachypnea criteria, a respiratory rate is considered tachypneic in an infant aged 4 months if it exceeds:",
+        options: ["> 30 breaths/min", "> 40 breaths/min", "> 50 breaths/min", "> 60 breaths/min"],
+        answer: 2,
+        correct_exp: "Correct! Tachypnea thresholds: '< 2 months: > 60; 2 months to 1 year: > 50 breaths/min; 1 year to 5 years: > 40; Over 6 years: > 30.' At 4 months, it is > 50 breaths/min.",
+        incorrect_exp: "Incorrect. For infants aged 2 months to 1 year, tachypnea is defined as > 50 breaths/min (>60 is for <2 months; >40 is for 1-5 years)."
+    },
+    {
+        q: "What physiological change occurs to respiratory rate, heart rate, and blood pressure as a child grows older?",
+        options: ["Respiratory rate increases, heart rate increases, blood pressure decreases", "Respiratory rate and heart rate decrease, while blood pressure increases", "All parameters increase steadily throughout childhood", "Heart rate decreases, but respiratory rate and blood pressure remain constant"],
+        answer: 1,
+        correct_exp: "Correct! 'Rule: As the child grows older, respiratory rate and heart rate decrease, while blood pressure increases.'",
+        incorrect_exp: "Incorrect. As children mature, resting heart rate and respiratory rate decrease progressively, whereas arterial blood pressure increases."
+    },
+    {
+        q: "When measuring recumbent length in a child younger than 36 months, how should the child's lower extremities be positioned?",
+        options: ["Left freely flexed in a relaxed frog-leg position", "Grasp knees and push gently toward the table to fully extend both legs", "Elevated at a 30-degree angle to align with the pelvic brim", "Internally rotated with hips hyperflexed toward the abdomen"],
+        answer: 1,
+        correct_exp: "Correct! The protocol states: 'Grasp knees and push gently toward table to fully extend legs. Measure from vertex of head to heels of feet to nearest centimeter.'",
+        incorrect_exp: "Incorrect. Accurate length requires grasping the knees and gently pushing downward toward the table surface to achieve full extension of the legs."
+    },
+    {
+        q: "What anatomical landmarks guide the accurate placement of measuring tape when determining head circumference (OFC)?",
+        options: ["From the nasal bridge across both earlobes to the C7 spinous process", "Above the supra-orbital ridges, laterally around parietal bones, and posteriorly over the prominent occiput", "Directly across the eyebrows and inferior border of both external auditory canals", "Around the mid-forehead and resting along the superior border of the trapezius"],
+        answer: 1,
+        correct_exp: "Correct! 'Measure at the greatest circumference, above supra-orbital ridges, laterally around parietal bones and posteriorly over most prominent part of occiput.'",
+        incorrect_exp: "Incorrect. Head circumference is measured at greatest diameter: above supra-orbital ridges, across parietal bones, and over the maximal occipital protuberance."
+    },
+    {
+        q: "During daily abdominal girth monitoring before and after feedings, what specific increase indicates abdominal distension?",
+        options: ["An increase of more than 0.5 cm", "An increase of more than 1 cm", "An increase of more than 2 cm before the next feeding", "An increase of more than 5 cm compared to baseline"],
+        answer: 2,
+        correct_exp: "Correct! 'It is measured daily before and after each feeding (an increase of more than 2 cm before next feeding indicates distention).'",
+        incorrect_exp: "Incorrect. An increase of more than 2 cm in abdominal girth before the subsequent feeding signifies abnormal abdominal distention."
+    }
+];
+
+function renderQuiz() {
+    const container = document.getElementById('questionsContainer');
+    container.innerHTML = '';
+
+    quizData.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = 'question-card';
+        card.id = `qCard_${index}`;
+
+        const optionsHtml = item.options.map((opt, optIndex) => `
+            <label class="option-label" id="label_${index}_${optIndex}">
+                <input type="radio" name="q_${index}" value="${optIndex}" onchange="clearError(${index})">
+                <span><strong>${String.fromCharCode(65 + optIndex)}.</strong> ${opt}</span>
+            </label>
+        `).join('');
+
+        card.innerHTML = `
+            <div class="q-header">
+                <span class="q-num">Question ${index + 1} of ${quizData.length}</span>
+                <div class="q-text">${item.q}</div>
+            </div>
+            <div class="options-grid">
+                ${optionsHtml}
+            </div>
+            <div class="explanation" id="exp_${index}"></div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+function clearError(index) {
+    const card = document.getElementById(`qCard_${index}`);
+    card.style.borderColor = 'var(--border)';
+}
+
+function submitExam() {
+    let score = 0;
+    let answeredCount = 0;
+
+    quizData.forEach((item, index) => {
+        const selected = document.querySelector(`input[name="q_${index}"]:checked`);
+        const expBox = document.getElementById(`exp_${index}`);
+        expBox.className = 'explanation visible';
+
+        // Reset all labels for this question
+        for (let i = 0; i < item.options.length; i++) {
+            const lbl = document.getElementById(`label_${index}_${i}`);
+            lbl.style.borderColor = 'var(--border)';
+            lbl.style.backgroundColor = 'transparent';
+        }
+
+        const correctLabel = document.getElementById(`label_${index}_${item.answer}`);
+
+        if (selected) {
+            answeredCount++;
+            const userAns = parseInt(selected.value);
+            const userLabel = document.getElementById(`label_${index}_${userAns}`);
+
+            if (userAns === item.answer) {
+                score++;
+                expBox.classList.add('correct');
+                expBox.innerHTML = `<strong>Result: Correct</strong><br>${item.correct_exp}`;
+                userLabel.style.borderColor = 'var(--correct)';
+                userLabel.style.backgroundColor = 'var(--correct-bg)';
+            } else {
+                expBox.classList.add('incorrect');
+                expBox.innerHTML = `<strong>Result: Incorrect (Correct Answer: ${String.fromCharCode(65 + item.answer)})</strong><br>${item.incorrect_exp}<br><br><em>Key Note:</em> ${item.correct_exp}`;
+                userLabel.style.borderColor = 'var(--incorrect)';
+                userLabel.style.backgroundColor = 'var(--incorrect-bg)';
+                correctLabel.style.borderColor = 'var(--correct)';
+                correctLabel.style.backgroundColor = 'var(--correct-bg)';
+            }
+        } else {
+            expBox.classList.add('incorrect');
+            expBox.innerHTML = `<strong>Result: Unanswered (Correct Answer: ${String.fromCharCode(65 + item.answer)})</strong><br>${item.incorrect_exp}<br><br><em>Key Note:</em> ${item.correct_exp}`;
+            correctLabel.style.borderColor = 'var(--correct)';
+            correctLabel.style.backgroundColor = 'var(--correct-bg)';
+            document.getElementById(`qCard_${index}`).style.borderColor = '#fca5a5';
+        }
+    });
+
+    const percentage = Math.round((score / quizData.length) * 100);
+    const scoreText = document.getElementById('scoreText');
+    scoreText.innerHTML = `Score: ${score} / ${quizData.length} (${percentage}%) - ${answeredCount}/${quizData.length} Answered`;
+    scoreText.style.color = percentage >= 75 ? 'var(--correct)' : 'var(--incorrect)';
+
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+}
+
+function resetExam() {
+    document.getElementById('quizForm').reset();
+    quizData.forEach((item, index) => {
+        const expBox = document.getElementById(`exp_${index}`);
+        expBox.className = 'explanation';
+        expBox.innerHTML = '';
+        for (let i = 0; i < item.options.length; i++) {
+            const lbl = document.getElementById(`label_${index}_${i}`);
+            lbl.style.borderColor = 'var(--border)';
+            lbl.style.backgroundColor = 'transparent';
+        }
+        document.getElementById(`qCard_${index}`).style.borderColor = 'var(--border)';
+    });
+    document.getElementById('scoreText').innerText = 'Answer all questions and submit';
+    document.getElementById('scoreText').style.color = 'var(--secondary)';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Initial render
+renderQuiz();
+</script>
+
+</body>
+</html>
